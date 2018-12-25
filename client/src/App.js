@@ -3,7 +3,10 @@ import axios from "axios";
 import "./App.css";
 
 class App extends Component {
-  componentDidMount() {
+  componentDidMount() {}
+
+  onFormSubmit(e) {
+    e.preventDefault();
     axios
       .get("api/activematch")
       .then(response => {
@@ -19,7 +22,22 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Starting point for application.</h1>
+        <div className="container">
+          <form onSubmit={this.onFormSubmit.bind(this)} className="mt-5 pb-5">
+            <div className="form-group">
+              <label htmlFor="summonerName">Summoner Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="summonerName"
+                placeholder="Summoner Name..."
+              />
+            </div>
+            <button type="submit" className="btn btn-success">
+              Search
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
