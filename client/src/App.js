@@ -3,15 +3,28 @@ import axios from "axios";
 import "./App.css";
 
 class App extends Component {
-  componentDidMount() {}
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputSummonerName: ""
+    };
+  }
+
+  onInputChange(e) {
+    const input = e.target.value;
+    this.setState({ inputSummonerName: input });
+  }
 
   onFormSubmit(e) {
     e.preventDefault();
     axios
-      .get("api/activematch")
+      .get(`api/summoner/${this.state.inputSummonerName}`)
       .then(response => {
-        console.log("Response:");
-        console.log(response);
+        if (response.data.success) {
+          console.log(response.data.payload);
+        } else {
+          console.log(response.data.error);
+        }
       })
       .catch(error => {
         console.log("Error found:");
@@ -25,12 +38,14 @@ class App extends Component {
         <div className="container">
           <form onSubmit={this.onFormSubmit.bind(this)} className="mt-5 pb-5">
             <div className="form-group">
-              <label htmlFor="summonerName">Summoner Name</label>
+              <label htmlFor="summonerName">Enter Summoner Name:</label>
               <input
+                onChange={this.onInputChange.bind(this)}
+                value={this.state.inputSummonerName}
                 type="text"
                 className="form-control"
                 id="summonerName"
-                placeholder="Summoner Name..."
+                placeholder="example: SKT T1 Faker"
               />
             </div>
             <button type="submit" className="btn btn-success">
