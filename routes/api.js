@@ -11,7 +11,7 @@ firebase.initializeApp({
 });
 
 const champions = {};
-const API_KEY = "RGAPI-d3772cc2-1508-4e23-9cec-4b26db0448a5";
+const API_KEY = "RGAPI-49e04f8e-03b5-48fe-af01-470b570afc33";
 let CURRENT_PATCH = "";
 
 //get every champion ID and image URL, store in server memory
@@ -34,9 +34,11 @@ axios
             key: championList[champion].key
           };
         }
-        console.log(champions);
+        //console.log(champions);
+        console.log("Champion Data populated.");
       })
       .catch(error => {
+        console.log("Error while populating Champion Data.");
         console.log(error);
       });
     //INITIALIZE SUMMONER SPELL IMAGE DATA + DURATION DATA
@@ -79,11 +81,27 @@ router.get("/summoner/:name", (req, res, next) => {
             withImage.spell2ImgUrl = `http://ddragon.leagueoflegends.com/cdn/${CURRENT_PATCH}/img/spell/SummonerMana.png`;
             return withImage;
           });
+          const enemyTeamData = {};
+          //console.log(enemyTeam);
+          enemyTeam.forEach(champion => {
+            const enemyChampion = { ...champion };
+            enemyChampion.championImgUrl = `http://ddragon.leagueoflegends.com/cdn/${CURRENT_PATCH}/img/champion/${
+              champions[enemyChampion.championId].imageURL
+            }`;
+            enemyChampion.spell1ImgUrl = `http://ddragon.leagueoflegends.com/cdn/${CURRENT_PATCH}/img/spell/SummonerFlash.png`;
+            enemyChampion.spell2ImgUrl = `http://ddragon.leagueoflegends.com/cdn/${CURRENT_PATCH}/img/spell/SummonerMana.png`;
+            enemyChampion.spell1Duration = 300;
+            enemyChampion.spell2Duration = 210;
+            enemyChampion.spell1TimerActive = false;
+            enemyChampion.spell2TimerActive = false;
+            enemyTeamData[champion.championId] = enemyChampion;
+          });
+          //console.log(enemyTeamData);
           //INITIALIZE A FIRE BASE ROOM AND SEND THE ID OF THE ROOM TO CLIENT FOR CONNECTION
           firebase
             .database()
             .ref("rooms")
-            .push(enemyData)
+            .push(enemyTeamData)
             .then(response => {
               const roomId = response.key;
               res.send({

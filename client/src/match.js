@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import firebase from "firebase";
 
+import Champion from "./champion";
+
+//http://localhost:3000/match/-LVHNFuaKIvZOxyrcrNa
+
 export default class Match extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      championData: []
+      championData: [],
+      championDataReceived: false
     };
   }
 
@@ -24,44 +29,38 @@ export default class Match extends Component {
     this.setState({ roomId: roomId }, params => {
       this.initalizeFirebase()
         .then(response => {
+          console.log("state.championData:");
           console.log(response);
-          //Store data in state to build UI
-
-          const champions = response.map(champion => {
-            return {
-              championId: champion.championId,
-              championImageURL: champion.imageURL,
-              spell1ImageURL: champion.spell1ImgUrl,
-              spell1Duration: 300,
-              spell1Remaining: null,
-              spell1Active: false,
-              spell2ImageUrl: champion.spell2ImgUrl,
-              spell2Duration: 300,
-              spell2Remaining: null,
-              spell2Active: false
-            };
+          console.log(response[11]);
+          let arrayOfIds = [];
+          for (let id in response) {
+            arrayOfIds.push(id);
+          }
+          console.log(arrayOfIds);
+          this.setState({
+            championData: response,
+            championDataReceived: true,
+            muhArray: arrayOfIds,
+            [arrayOfIds[0]]: response[arrayOfIds[0]],
+            [arrayOfIds[1]]: response[arrayOfIds[1]],
+            [arrayOfIds[2]]: response[arrayOfIds[2]],
+            [arrayOfIds[3]]: response[arrayOfIds[3]],
+            [arrayOfIds[4]]: response[arrayOfIds[4]]
           });
-          this.setState({ championData: champions });
         })
         .catch(error => {
           console.log(error);
         });
-    }); //use firebase once() method to initalize component state
-
-    // firebase
-    //   .database()
-    //   .ref(`rooms/${roomId}`)
-    //   .once("value")
-    //   .then(dataSnapshot => {
-    //     console.log(dataSnapshot.val());
-    //   });
-    //use firebase on() method to implement listeners for changes in the database
+    });
     firebase
       .database()
       .ref(`rooms/${roomId}`)
       .on("child_changed", (snapshot, prevChildKey) => {
         const newValue = snapshot.val();
-        console.log(newValue);
+        console.log(
+          "A firebase value has changed!" + `Champion ID: ${snapshot.key}`
+        );
+        this.setState({ [snapshot.key]: newValue });
       });
   }
 
@@ -73,32 +72,33 @@ export default class Match extends Component {
         .ref(`rooms/${roomId}`)
         .once("value")
         .then(dataSnapshot => {
-          //console.log(dataSnapshot.val());
           resolve(dataSnapshot.val());
         });
     });
   }
 
-  onSpellClick() {
-    console.log("Spell clicked.");
+  handleSpellClick() {
+    console.log("Running handleSpellClick in Match component.");
   }
 
   render() {
-    const championComponents = this.state.championData.map(champion => {
-      return (
-        <div key={champion.championId}>
-          <img src={champion.championImageURL} />
-          <img
-            onClick={this.onSpellClick.bind(this)}
-            src={champion.spell1ImageURL}
+    const championComponents = [];
+    if (this.state.championDataReceived) {
+      //console.log("Match component rendering. Champion Data received.");
+      this.state.muhArray.forEach(element => {
+        const champion = this.state[element];
+        //console.log(champion.championId);
+        championComponents.push(
+          <Champion
+            key={champion.championId}
+            championData={champion}
+            handleSpellClick={this.handleSpellClick.bind(this)}
           />
-          <img
-            onClick={this.onSpellClick.bind(this)}
-            src={champion.spell2ImageUrl}
-          />
-        </div>
-      );
-    });
+        );
+      });
+    } else {
+      //console.log("Match component rendering. No Champion Data received yet.");
+    }
     return (
       <div>
         <h1>Match Component</h1>
