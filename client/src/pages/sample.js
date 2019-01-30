@@ -13,7 +13,7 @@ export default class Sample extends Component {
         <Link style={{ marginBottom: "30px", display: "block" }} to="/">
           Back to Home
         </Link>
-        <Match staticMatchData={staticMatchData} />
+        <Match matchData={staticMatchData} />
       </div>
     );
   }

@@ -5,7 +5,7 @@ import Champion from "../components/champion";
 export default class Match extends Component {
   constructor(props) {
     super(props);
-    this.state = { ...this.props.staticMatchData };
+    this.state = { ...this.props.matchData };
   }
 
   reposition(direction, position) {

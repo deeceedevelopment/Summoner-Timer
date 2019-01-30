@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+import worker from "../worker.js";
+import WebWorker from "../webWorker";
+
 export default class Spell extends Component {
   constructor(props) {
     super(props);
@@ -10,13 +13,16 @@ export default class Spell extends Component {
     };
   }
 
-  componentDidUpdate() {
-    //console.log("componentDidUpdate()");
+  componentWillUnmount() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 
   onSpellClick() {
     if (this.state.spellActive) {
       clearInterval(this.timerId);
+      this.timerId = null;
       this.setState({ spellActive: false, spellDurationRemaining: null });
     } else {
       this.setState(
@@ -40,6 +46,7 @@ export default class Spell extends Component {
         });
       } else {
         clearInterval(this.timerId);
+        this.timerId = null;
         this.setState({ spellActive: false, spellDurationRemaining: null });
       }
     }, 1000);
@@ -78,10 +85,3 @@ export default class Spell extends Component {
     );
   }
 }
-
-/*
-PROPS: spell duration, spell image source
-
-
-
-*/
