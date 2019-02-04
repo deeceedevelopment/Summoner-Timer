@@ -6,16 +6,15 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 
+require("dotenv").config();
+
 var app = express();
 
 //PASSPORT CONFIGURATION
 require("./passport")(passport);
 
 //DATABASE CONNECTION
-mongoose.connect(
-  "mongodb://admin:password1@ds243084.mlab.com:43084/lol-flash-timer",
-  { useNewUrlParser: true }
-);
+mongoose.connect(process.env.MONGOOSE_URI, { useNewUrlParser: true });
 
 //APP CONFIGURATION
 app.use(logger("dev"));
@@ -37,8 +36,8 @@ var adminRouter = require("./routes/admin");
 
 //RATE LIMITING
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 5
 });
 
 const adminLimiter = rateLimit({
