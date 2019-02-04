@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
+import Admin from "./pages/admin";
 import Home from "./pages/home";
 import Custom from "./pages/custom";
 import Sample from "./pages/sample";
@@ -16,6 +17,7 @@ class App extends Component {
         <div className="App">
           <div className="container">
             <Route exact path="/" component={Home} />
+            <Route path="/admin" component={Admin} />
             <Route path="/custom" component={Custom} />
             <Route path="/sample" component={Sample} />
             <Route path="/search" component={Search} />

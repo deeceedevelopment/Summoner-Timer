@@ -18,6 +18,9 @@ export default class Home extends Component {
         <Link style={{ marginBottom: "10px", display: "block" }} to="/team">
           Team Mode (beta)
         </Link>
+        <Link style={{ marginBottom: "10px", display: "block" }} to="/admin">
+          Admin Dashboard
+        </Link>
       </div>
     );
   }
