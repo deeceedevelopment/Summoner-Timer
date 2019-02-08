@@ -1,14 +1,13 @@
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
-const rateLimit = require("express-rate-limit");
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 
 require("dotenv").config();
 
-var app = express();
+const app = express();
 
 //PASSPORT CONFIGURATION
 require("./passport")(passport);
@@ -31,22 +30,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //EXPRESS ROUTER
-var apiRouter = require("./routes/api");
-var adminRouter = require("./routes/admin");
+const apiRouter = require("./routes/api");
+const adminRouter = require("./routes/admin");
 
-//RATE LIMITING
-const apiLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 15 minutes
-  max: 5
-});
-
-const adminLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour window
-  max: 10 // start blocking after 5 requests
-});
-
-app.use("/api/", apiLimiter, apiRouter);
-app.use("/admin/", adminLimiter, adminRouter);
+app.use("/api/", apiRouter);
+app.use("/admin/", adminRouter);
 
 if (process.env.NODE_ENV === "production") {
   //set static folder for react SPA (build folder)
@@ -62,3 +50,15 @@ if (process.env.NODE_ENV === "production") {
 }
 
 module.exports = app;
+
+/*
+  TO DO
+
+  Rate Limits:
+  - limit POST requests to /admin/login
+  - limit GET requests to /admin/populate-database
+  - limit GET requets to /api/static-data
+  - limit GET requests to /api/active-match/ / / /
+
+
+*/

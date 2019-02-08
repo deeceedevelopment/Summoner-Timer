@@ -20,7 +20,7 @@
           axios
             .get("/admin/populate-database")
             .then(response => {
-              console.log("Database populated.");
+              console.log(response);
             })
             .catch(error => {
               console.log("Failed to populate database.");
